@@ -7,16 +7,23 @@
 // Ref: Book: UVM Premier Ray Salemi ( Tiny ALU: Page nb: 10) : https://github.com/raysalemi/uvmprimer
 //-----------------------------------------------------------------------------------------------------
 
+import tiny_alu_pkg::OPCODE_BITS  ;
+import tiny_alu_pkg::NOP_OP       ;
+import tiny_alu_pkg::ADD_OP       ;
+import tiny_alu_pkg::AND_OP       ;
+import tiny_alu_pkg::XOR_OP       ;
+import tiny_alu_pkg::MUL_OP       ;
+
 
 module tiny_alu
 
-      parameter   ( INPUT_DATA_BITS     =     8   ,
-                    OPCODE_BITS         =     3   );
+      parameter   ( INPUT_DATA_BITS     =     8   );
 
             (
-
                   input   wire                                        clk_i       ,
-                  input   wire                                        reset_n_i   , // Active low reset maynot be relevant for FPGAs, but maybe for ASICs
+
+                  // Active low reset maynot be relevant for FPGAs, but maybe for ASICs
+                  input   wire                                        reset_n_i   ,
 
                   input   wire        [ INPUT_DATA_BITS-1: 0 ]        a_i         ,
                   input   wire        [ INPUT_DATA_BITS-1: 0 ]        b_i         ,
@@ -31,14 +38,7 @@ module tiny_alu
 
 
 
-
   wire  [ INPUT_DATA_BITS*2-1: 0 ] result       ;
-
-  localparam [ OPCODE_BITS -1: 0 ] NOP_OP     = { OPCODE_BITS { 'd0 } } ;
-  localparam [ OPCODE_BITS -1: 0 ] ADD_OP     = { OPCODE_BITS { 'd1 } } ;
-  localparam [ OPCODE_BITS -1: 0 ] AND_OP     = { OPCODE_BITS { 'd2 } } ;
-  localparam [ OPCODE_BITS -1: 0 ] XOR_OP     = { OPCODE_BITS { 'd3 } } ;
-  localparam [ OPCODE_BITS -1: 0 ] MUL_OP     = { OPCODE_BITS { 'd4 } } ;
 
   //-----------------------------------------------------------------------------------------------------
   // Outputs Assignment
