@@ -1,10 +1,7 @@
 //-----------------------------------------------------------------------------------------------------
 // Copyright: Free
 // Author: krsheshu
-// Brief: This is a small ALU which is used as a base design for testing various test bench frameworks
-//        The ALU has input 8 bit data which computes the results as 16 bit outputs
-//        Assuming single clock outputs for all instructions
-// Ref: Book: UVM Premier Ray Salemi ( Tiny ALU: Page nb: 10) : https://github.com/raysalemi/uvmprimer
+// Brief: tiny_alu_interface
 //-----------------------------------------------------------------------------------------------------
 
 interface tiny_alu_intf
