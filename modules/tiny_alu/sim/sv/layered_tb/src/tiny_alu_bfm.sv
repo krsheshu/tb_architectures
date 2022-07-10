@@ -11,37 +11,32 @@ interface tiny_alu_bfm
   //  Imports
   //-------------------------------------------------------------
   import        clock_period_pkg ::  CLKPERIOD_NS             ;
-  import        tiny_alu_pkg     ::  OPCODE_BITS              ;
 
-
-        parameter   ( INPUT_DATA_BITS     =     8   );
-
+  //-------------------------------------------------------------
+  //  Ports
+  //-------------------------------------------------------------
+  (
+      input   logic                            clk_i        ;
+      input   logic                            reset_n_i
+  );
   //-------------------------------------------------------------
   //  Interface signals
   //-------------------------------------------------------------
-    logic                                         clk_i         ;
-    logic                                         reset_n_i     ;
+   (
 
-    logic         [ INPUT_DATA_BITS-1: 0 ]        a_i           ;
-    logic         [ INPUT_DATA_BITS-1: 0 ]        b_i           ;
+      tiny_alu_intf         intf
 
-    logic         [ OPCODE_BITS-1: 0 ]            opcode_i      ;
-    logic                                         start_i       ;
-
-    logic         [ INPUT_DATA_BITS*2-1: 0 ]      result_o      ;
-    logic                                         done_o        ;
-
-
+   );
 
   //-------------------------------------------------------------
   //  Clk Description
   //-------------------------------------------------------------
 
   initial begin
-      clk_i   =   0;
+      intf.clk_i   =   0;
       forever begin
         # (CLKPERIOD_NS/2);
-        clk_i = ~clk_i;
+        intf.clk_i = ~intf.clk_i;
       end
   end
 
@@ -51,8 +46,8 @@ interface tiny_alu_bfm
   //-------------------------------------------------------------
 
   initial begin
-      reset_n_i     =   1'b1    ;
-      start_i       =   1'b0    ;
+      intf.reset_n_i     =   1'b1    ;
+      intf.start_i       =   1'b0    ;
   end
 
   //----------------------------------------------------------------------------------
@@ -61,8 +56,8 @@ interface tiny_alu_bfm
 
   task assert_reset ( integer nb_clks )
 
-      reset_n_i     =   1'b0    ;
-      reset_n_i     =   repeat ( nb_clks ) @posedge ( clk_i ) 1'b1 ;
+      intf.reset_n_i     =   1'b0    ;
+      intf.reset_n_i     =   repeat ( nb_clks ) @posedge ( intf.clk_i ) 1'b1 ;
 
   endtask
 
@@ -73,11 +68,10 @@ interface tiny_alu_bfm
 
   task assert_reset ( integer nb_clks )
 
-      reset_n_i     =   1'b0    ;
-      reset_n_i     =   repeat ( nb_clks ) @posedge ( clk_i ) 1'b1 ;
+      intf.reset_n_i     =   1'b0    ;
+      intf.reset_n_i     =   repeat ( nb_clks ) @posedge ( intf.clk_i ) 1'b1 ;
 
   endtask
-
 
 
 

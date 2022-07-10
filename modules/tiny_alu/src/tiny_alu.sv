@@ -14,23 +14,23 @@ module tiny_alu
   //  Imports
   //-------------------------------------------------------------
 
-  import tiny_alu_pkg::OPCODE_BITS  ;
-  import tiny_alu_pkg::NOP_OP       ;
-  import tiny_alu_pkg::ADD_OP       ;
-  import tiny_alu_pkg::AND_OP       ;
-  import tiny_alu_pkg::XOR_OP       ;
-  import tiny_alu_pkg::MUL_OP       ;
+  import  tiny_alu_pkg  ::    NOP_OP       ;
+  import  tiny_alu_pkg  ::    ADD_OP       ;
+  import  tiny_alu_pkg  ::    AND_OP       ;
+  import  tiny_alu_pkg  ::    XOR_OP       ;
+  import  tiny_alu_pkg  ::    MUL_OP       ;
 
 
-      parameter   ( INPUT_DATA_BITS     =     8   );
+  parameter   ( INPUT_DATA_BITS     =     8   );
 
   //-------------------------------------------------------------
   //  Ports
   //-------------------------------------------------------------
 
    (
+      clk_reset_interface           clk_rst_if  ,
 
-      tiny_alu_intf         intf
+      tiny_alu_bus_interface   #( .INPUT_DATA_BITS  ( INPUT_DATA_BITS ) )    bus_if
 
    );
 
@@ -43,13 +43,13 @@ module tiny_alu
   // Outputs Assignment
   //-----------------------------------------------------------------------------------------------------
 
-  always_ff @( posedge intf.clk_i, posedge intf.reset_n_i ) begin  : output_assignments
-      if ( intf.reset_n_i == 1'b0 )  begin
-            intf.result_o  <= 'b0       ;
-            intf.done_o    <= 'b0       ;
+  always_ff @( posedge clk_rst_if.clk_i, posedge clk_rst_if.reset_n_i ) begin  : output_assignments
+      if ( clk_rst_if.reset_n_i == 1'b0 )  begin
+            bus_if.result_o  <= 'b0       ;
+            bus_if.done_o    <= 'b0       ;
       end else  begin
-            intf.result_o  <= result   ;
-            intf.done_o    <= done     ;
+            bus_if.result_o  <= result   ;
+            bus_if.done_o    <= done     ;
       end
   end : output_assignments
 
@@ -62,22 +62,22 @@ module tiny_alu
       done    =   'b0 ;
       result  =   'd0 ;
 
-      if ( intf.start_i )  begin
+      if ( bus_if.start_i )  begin
 
-          case ( intf.opcode_i )
+          case ( bus_if.opcode_i )
 
               NOP_OP  :   done    =   'b1       ;
 
-              ADD_OP  :   result  =   intf.a_i + intf.b_i ;
+              ADD_OP  :   result  =   bus_if.a_i + bus_if.b_i ;
                           done    =   'b1       ;
 
-              AND_OP  :   result  =   intf.a_i & intf.b_i ;
+              AND_OP  :   result  =   bus_if.a_i & bus_if.b_i ;
                           done    =   'b1       ;
 
-              XOR_OP  :   result  =   intf.a_i ^ intf.b_i ;
+              XOR_OP  :   result  =   bus_if.a_i ^ bus_if.b_i ;
                           done    =   'b1       ;
 
-              MUL_OP  :   result  =   intf.a_i * intf.b_i ;
+              MUL_OP  :   result  =   bus_if.a_i * bus_if.b_i ;
                           done    =   'b1       ;
 
               default :   done    =   'b0       ;

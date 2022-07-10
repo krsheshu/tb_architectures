@@ -4,7 +4,7 @@
 // Brief: tiny_alu_interface
 //-----------------------------------------------------------------------------------------------------
 
-interface tiny_alu_intf
+interface tiny_alu_bus_interface
 
   //-------------------------------------------------------------
   //  Imports
@@ -12,15 +12,7 @@ interface tiny_alu_intf
 
   import tiny_alu_pkg ::  OPCODE_BITS  ;
 
-      parameter   ( INPUT_DATA_BITS     =     8   );
-
-  //-------------------------------------------------------------
-  //  Ports
-  //-------------------------------------------------------------
-  (
-      input   logic                            clk_i        ;
-      input   logic                            reset_n_i
-  );
+  parameter   ( INPUT_DATA_BITS     =     8   );
 
   //-------------------------------------------------------------
   //  Interface signals
@@ -37,6 +29,6 @@ interface tiny_alu_intf
 
 //-----------------------------------------------------------------------------------------------------
 
-endinterface : tiny_alu_intf
+endinterface : tiny_alu_bus_interface
 
 //-----------------------------------------------------------------------------------------------------
