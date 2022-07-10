@@ -26,15 +26,32 @@ interface tiny_alu_bfm
         bus_if.start_i  <= 1'b1   ;
         bus_if.a_i      <= a      ;
         bus_if.b_i      <= b      ;
+    @ (posedge clk_rst_if.clk_i)  ;
+        bus_if.start_i  <= 1'b0   ;
 
   endtask : compute
 
+  //----------------------------------------------------------------------------------
+  // Task: add_to_compute_pipeline
+  //----------------------------------------------------------------------------------
+
+  task add_to_compute_pipeline (  input logic [ OPCODE_BITS.1     : 0 ]   opcode  ,
+                                  input logic [ INPUT_DATA_BITS-1 : 0 ]   a       ,
+                                  input logic [ INPUT_DATA_BITS-1 : 0 ]   b       )
+
+    @ (posedge clk_rst_if.clk_i)  ;
+        bus_if.start_i  <= 1'b1   ;
+        bus_if.a_i      <= a      ;
+        bus_if.b_i      <= b      ;
+
+  endtask : add_to_compute_pipeline
+
 
   //----------------------------------------------------------------------------------
-  // Task: stop_compute
+  // Task: stop_compute_pipeline
   //----------------------------------------------------------------------------------
 
-  task stop_compute ( )
+  task stop_compute_pipeline ( )
 
     @ (posedge clk_rst_if.clk_i) ;
         bus_if.start_i = 1'b0;
@@ -43,7 +60,7 @@ interface tiny_alu_bfm
 
 
   //----------------------------------------------------------------------------------
-  // Task: get_compute
+  // Task: get_result
   //----------------------------------------------------------------------------------
 
   task get_result ( output logic                              valid   ,
@@ -53,7 +70,7 @@ interface tiny_alu_bfm
         result  = ( bus_if.done == 1'b1 ) ?  bus_if.result_o : 'd0  ;
         valid   = bus_if.done_o ;
 
-  endtask
+  endtask : get_result
 
 
 //----------------------------------------------------------------------------------
