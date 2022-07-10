@@ -8,75 +8,53 @@
 interface tiny_alu_bfm
 
   //-------------------------------------------------------------
-  //  Imports
-  //-------------------------------------------------------------
-  import        clock_period_pkg ::  CLKPERIOD_NS             ;
-
-  //-------------------------------------------------------------
-  //  Ports
-  //-------------------------------------------------------------
-  (
-      input   logic                            clk_i        ;
-      input   logic                            reset_n_i
-  );
-  //-------------------------------------------------------------
   //  Interface signals
   //-------------------------------------------------------------
-   (
+  clk_reset_interface           clk_rst_if  ;
 
-      tiny_alu_intf         intf
-
-   );
-
-  //-------------------------------------------------------------
-  //  Clk Description
-  //-------------------------------------------------------------
-
-  initial begin
-      intf.clk_i   =   0;
-      forever begin
-        # (CLKPERIOD_NS/2);
-        intf.clk_i = ~intf.clk_i;
-      end
-  end
-
-
-  //-------------------------------------------------------------
-  //  Initialize module input signals
-  //-------------------------------------------------------------
-
-  initial begin
-      intf.reset_n_i     =   1'b1    ;
-      intf.start_i       =   1'b0    ;
-  end
+  tiny_alu_bus_interface   #( .INPUT_DATA_BITS  ( INPUT_DATA_BITS ) )    bus_if ;
 
   //----------------------------------------------------------------------------------
-  // Task: assert reset
+  // Task: compute
   //----------------------------------------------------------------------------------
 
-  task assert_reset ( integer nb_clks )
+  task compute (  input logic [ OPCODE_BITS.1     : 0 ]   opcode  ,
+                  input logic [ INPUT_DATA_BITS-1 : 0 ]   a       ,
+                  input logic [ INPUT_DATA_BITS-1 : 0 ]   b       )
 
-      intf.reset_n_i     =   1'b0    ;
-      intf.reset_n_i     =   repeat ( nb_clks ) @posedge ( intf.clk_i ) 1'b1 ;
+    @ (posedge clk_rst_if.clk_i)  ;
+        bus_if.start_i  <= 1'b1   ;
+        bus_if.a_i      <= a      ;
+        bus_if.b_i      <= b      ;
+
+  endtask : compute
+
+
+  //----------------------------------------------------------------------------------
+  // Task: stop_compute
+  //----------------------------------------------------------------------------------
+
+  task stop_compute ( )
+
+    @ (posedge clk_rst_if.clk_i) ;
+        bus_if.start_i = 1'b0;
+
+  endtask : end_compute
+
+
+  //----------------------------------------------------------------------------------
+  // Task: get_compute
+  //----------------------------------------------------------------------------------
+
+  task get_result ( output logic                              valid   ,
+                    output logic [ INPUT_DATA_BITS*2-1 : 0 ]  result  )
+
+    @ (posedge clk_rst_if.clk_i) ;
+        result  = ( bus_if.done == 1'b1 ) ?  bus_if.result_o : 'd0  ;
+        valid   = bus_if.done_o ;
 
   endtask
-
-
-  //----------------------------------------------------------------------------------
-  // Task: assert reset
-  //----------------------------------------------------------------------------------
-
-  task assert_reset ( integer nb_clks )
-
-      intf.reset_n_i     =   1'b0    ;
-      intf.reset_n_i     =   repeat ( nb_clks ) @posedge ( intf.clk_i ) 1'b1 ;
-
-  endtask
-
-
-
-
 
 
 //----------------------------------------------------------------------------------
-endinterface : tiny_alu_bfm
+endmodule : tiny_alu_bfm
